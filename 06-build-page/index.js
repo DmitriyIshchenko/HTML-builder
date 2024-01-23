@@ -1,19 +1,19 @@
-const { readdir, readFile, mkdir, writeFile } = require("node:fs/promises");
-const path = require("path");
-const { mergeStyles } = require("../05-merge-styles");
-const { copyDirectory } = require("../04-copy-directory");
+const { readdir, readFile, mkdir, writeFile } = require('node:fs/promises');
+const path = require('path');
+const { mergeStyles } = require('../05-merge-styles');
+const { copyDirectory } = require('../04-copy-directory');
 
 const getComponentsObj = async () => {
   try {
     const components = {};
-    const componentsDir = path.join(__dirname, "components");
+    const componentsDir = path.join(__dirname, 'components');
 
     const files = await readdir(componentsDir);
     for (let file of files) {
-      const [fileName] = file.match(/^\w+/); // drop extention
+      const [fileName] = file.match(/^\w+/); // drop extension
       components[fileName] = await readFile(
         path.join(componentsDir, file),
-        "utf-8"
+        'utf-8',
       );
     }
     return components;
@@ -28,8 +28,8 @@ const mergeHTML = async () => {
 
     // read template
     const template = await readFile(
-      path.join(__dirname, "template.html"),
-      "utf-8"
+      path.join(__dirname, 'template.html'),
+      'utf-8',
     );
 
     // replace placeholders with components
@@ -37,44 +37,35 @@ const mergeHTML = async () => {
     Object.keys(componentsObj).forEach((component) => {
       newTemplate = newTemplate.replaceAll(
         `{{${component}}}`,
-        componentsObj[component]
+        componentsObj[component],
       );
     });
 
     // write to file
     await writeFile(
-      path.join(__dirname, "project-dist", "index.html"),
-      newTemplate
+      path.join(__dirname, 'project-dist', 'index.html'),
+      newTemplate,
     );
   } catch (err) {
     console.error(err.message);
   }
 };
 
-const copyAssets = async (distDir) => {
-  await mkdir(distDir, { recursive: true });
-
-  const folders = await readdir(path.join(__dirname, "assets"));
-
-  for (let folder of folders) {
-    copyDirectory(
-      path.join(__dirname, "assets", folder),
-      path.join(distDir, "assets", folder)
-    );
-  }
-};
-
 const bundle = async () => {
   try {
-    const distPath = path.join(__dirname, "project-dist");
+    const distPath = path.join(__dirname, 'project-dist');
     await mkdir(distPath, { recursive: true });
 
     mergeHTML();
     mergeStyles(
-      path.join(__dirname, "styles"),
-      path.join(distPath, "style.css")
+      path.join(__dirname, 'styles'),
+      path.join(distPath, 'style.css'),
     );
-    copyAssets(distPath);
+    // assets
+    copyDirectory(
+      path.join(__dirname, 'assets'),
+      path.join(distPath, 'assets'),
+    );
   } catch (err) {
     console.error(err.message);
   }
