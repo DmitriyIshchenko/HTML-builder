@@ -1,22 +1,21 @@
-const { readdir } = require("node:fs/promises");
-const path = require("path");
-const fs = require("fs");
+const { readdir } = require('node:fs/promises');
+const path = require('path');
+const fs = require('fs');
 
 const getFilesData = async () => {
   try {
-    const files = await readdir(path.join(__dirname, "secret-folder"), {
+    const files = await readdir(path.join(__dirname, 'secret-folder'), {
       withFileTypes: true,
     });
 
     files
       .filter((file) => file.isFile())
       .map((file) => {
-        const filePath = path.join(__dirname, "secret-folder", file.name);
-        const name = file.name;
-        const extension = path.extname(filePath).slice(1);
-        
+        const filePath = path.join(__dirname, 'secret-folder', file.name);
+        const { name, ext } = path.parse(filePath);
+
         fs.stat(filePath, (err, stats) => {
-          console.log([name.split('.')[0], extension, stats.size + "b"].join(" - "));
+          console.log([name, ext.slice(1), stats.size + 'b'].join(' - '));
         });
       });
   } catch (err) {
