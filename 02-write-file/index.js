@@ -7,7 +7,7 @@ fs.appendFile(path.join(__dirname, "text.txt"), "", (err) => {
 });
 stdout.write("Enter text: \n");
 stdin.on("data", (text) => {
-  if (text.toString() === "exit\n") process.exit();
+  if (text.toString().trim().toLowerCase() === "exit") process.exit();
   fs.appendFile(path.join(__dirname, "text.txt"), text, (err) => {
     if (err) console.error(err);
   });
