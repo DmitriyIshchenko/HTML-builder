@@ -14,8 +14,9 @@ const getFilesData = async () => {
         const filePath = path.join(__dirname, "secret-folder", file.name);
         const name = file.name;
         const extension = path.extname(filePath).slice(1);
+        
         fs.stat(filePath, (err, stats) => {
-          console.log([name, extension, stats.size + "b"].join(" - "));
+          console.log([name.split('.')[0], extension, stats.size + "b"].join(" - "));
         });
       });
   } catch (err) {
